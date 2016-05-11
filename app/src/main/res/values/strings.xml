@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">ClassTimetable</string>
     <string name="no_events">No Events</string>
+    <string name="settings">Settings</string>
 </resources>

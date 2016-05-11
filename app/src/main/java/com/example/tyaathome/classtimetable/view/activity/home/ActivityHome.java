@@ -1,32 +1,38 @@
-package com.example.tyaathome.classtimetable.view.activity;
+package com.example.tyaathome.classtimetable.view.activity.home;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.tyaathome.classtimetable.R;
+import com.example.tyaathome.classtimetable.utils.RequestCode;
+import com.example.tyaathome.classtimetable.view.activity.base.ActivityBaseWithTitle;
+import com.example.tyaathome.classtimetable.view.activity.settings.ActivitySettings;
 import com.example.tyaathome.classtimetable.view.adapter.AdapterWeekFragment;
 import com.example.tyaathome.classtimetable.view.fragment.FragmentClassTimetable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends FragmentActivity {
+public class ActivityHome extends ActivityBaseWithTitle {
 
     private ViewPager viewPager = null;
 
     private List<Fragment> fragmentList = new ArrayList<Fragment>();
 
     private AdapterWeekFragment adapterWeekFragment = null;
-
-    private RelativeLayout rlCurrentTab = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,24 +53,64 @@ public class MainActivity extends FragmentActivity {
         super.onDestroy();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case RequestCode.CODE_SETTINGS:
+                    showToast("Settings!");
+                    break;
+            }
+        }
+    }
+
     private void initView() {
         viewPager = (ViewPager) findViewById(R.id.viewpage);
-        rlCurrentTab = (RelativeLayout) findViewById(R.id.current_tab);
+        initLeftView();
+        initRightView();
     }
+
+    private void initLeftView() {
+        LinearLayout llLeft = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.layout_week, null);
+        llLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showToast("OnClick!");
+            }
+        });
+        addViewToLeft(llLeft);
+    }
+
+    private void initRightView() {
+        LinearLayout llRight = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.layout_add_and_settings, null);
+        ImageView ivAdd = (ImageView) llRight.findViewById(R.id.iv_add);
+        ImageView ivSetting = (ImageView) llRight.findViewById(R.id.iv_settings);
+        ivAdd.setOnClickListener(listenerRight);
+        ivSetting.setOnClickListener(listenerRight);
+        addViewToRight(llRight);
+    }
+
+    private View.OnClickListener listenerRight = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.iv_add:
+
+                    break;
+                case R.id.iv_settings:
+                    Intent intent = new Intent(ActivityHome.this, ActivitySettings.class);
+                    startActivityForResult(intent, RequestCode.CODE_SETTINGS);
+                    break;
+            }
+        }
+    };
 
     private void initEvent() {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                System.out.println("position: " + position + ", positionOffset: " + positionOffset + ",positionOffsetPixels: " + positionOffsetPixels);
 
-                //changeViewPosition(rlCurrentTab, positionOffset);
-
-                int[] location = new int[2];
-                rlCurrentTab.getLocationOnScreen(location);
-                int x = location[0];
-                int y = location[1];
-                rlCurrentTab.scrollTo(positionOffsetPixels, y);
             }
 
             @Override
@@ -91,19 +137,5 @@ public class MainActivity extends FragmentActivity {
         fragmentList.add(f3);
         adapterWeekFragment = new AdapterWeekFragment(getSupportFragmentManager(), fragmentList);
         viewPager.setAdapter(adapterWeekFragment);
-    }
-
-    private void changeViewPosition(View view, float percentage) {
-        int[] location = new int[2];
-        view.getLocationOnScreen(location);
-        int x = location[0];
-        int y = location[1];
-
-        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-        int viewWidth = layoutParams.width;
-        float distance = (x - viewWidth) / 2.f;
-        int newX = (int)(distance * (1-percentage));
-        view.scrollTo(newX ,y);
-        System.out.println(newX+"");
     }
 }
