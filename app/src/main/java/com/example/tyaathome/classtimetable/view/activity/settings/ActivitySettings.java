@@ -8,11 +8,19 @@ import android.widget.ImageView;
 
 import com.example.tyaathome.classtimetable.R;
 import com.example.tyaathome.classtimetable.view.activity.base.ActivityBaseWithTitle;
+import com.example.tyaathome.classtimetable.view.adapter.AdapterSettings;
+import com.example.tyaathome.classtimetable.view.myview.MyListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by tyaathome on 2016/5/11.
  */
 public class ActivitySettings extends ActivityBaseWithTitle{
+
+    private AdapterSettings adapterSettings;
+    private MyListView listView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,6 +50,7 @@ public class ActivitySettings extends ActivityBaseWithTitle{
 
     private void initView() {
         initBackView();
+        listView = (MyListView) findViewById(R.id.listview);
     }
 
     private void initBackView() {
@@ -60,7 +69,12 @@ public class ActivitySettings extends ActivityBaseWithTitle{
     }
 
     private void initData() {
-
+        List<String> listdata = new ArrayList<String>();
+        listdata.add("Number of Weeks");
+        listdata.add("Weekend Days");
+        listdata.add("Notifications");
+        adapterSettings = new AdapterSettings(this, listdata);
+        listView.setAdapter(adapterSettings);
     }
 
 }
