@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.tyaathome.classtimetable.R;
 import com.example.tyaathome.classtimetable.utils.RequestCode;
+import com.example.tyaathome.classtimetable.utils.Utils;
 import com.example.tyaathome.classtimetable.view.activity.base.ActivityBaseWithTitle;
 import com.example.tyaathome.classtimetable.view.activity.settings.ActivitySettings;
 import com.example.tyaathome.classtimetable.view.adapter.AdapterWeekFragment;
@@ -126,15 +127,49 @@ public class ActivityHome extends ActivityBaseWithTitle {
     }
 
     private void initData() {
+
+        List<String> listdata = new ArrayList<String>();
+        listdata.add("1111111111111");
+        listdata.add("2222222222222");
+        listdata.add("3333333333333");
+        listdata.add("4444444444444");
+        listdata.add("5555555555555");
+
+        List<String> listdata2 = new ArrayList<String>();
+        listdata2.add("2222222222222");
+        listdata2.add("2222222222222");
+        listdata2.add("2222222222222");
+        listdata2.add("2222222222222");
+        listdata2.add("2222222222222");
+
+        List<String> listdata3 = new ArrayList<String>();
+        listdata3.add("3333333333333");
+        listdata3.add("3333333333333");
+        listdata3.add("3333333333333");
+        listdata3.add("3333333333333");
+        listdata3.add("3333333333333");
+
         FragmentClassTimetable f1 = new FragmentClassTimetable();
+        f1.setData(listdata);
         FragmentClassTimetable f2 = new FragmentClassTimetable();
+        f2.setData(listdata2);
         FragmentClassTimetable f3 = new FragmentClassTimetable();
+        f3.setData(listdata3);
         f1.setPageName("f11111111111");
         f2.setPageName("f22222222222");
         f3.setPageName("f33333333333");
         fragmentList.add(f1);
         fragmentList.add(f2);
         fragmentList.add(f3);
+
+
+//        for(int i = 0; i < 28; i++) {
+//            FragmentClassTimetable f = new FragmentClassTimetable();
+//            f.setData(listdata);
+//            f.setPageName(String.valueOf(i));
+//            fragmentList.add(f);
+//        }
+
         adapterWeekFragment = new AdapterWeekFragment(getSupportFragmentManager(), fragmentList);
         viewPager.setAdapter(adapterWeekFragment);
     }
