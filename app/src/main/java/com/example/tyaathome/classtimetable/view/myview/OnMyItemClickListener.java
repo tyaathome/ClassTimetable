@@ -36,15 +36,17 @@ public abstract class OnMyItemClickListener implements RecyclerView.OnItemTouchL
 
     }
 
-    public abstract void onItemClick(RecyclerView.ViewHolder vh);
+    public abstract void onItemClick(RecyclerView.ViewHolder vh, int position);
 
     private class ItemTouchHelperGestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
             View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
+            int position = recyclerView.getChildAdapterPosition(child);
             if(child != null) {
                 RecyclerView.ViewHolder vh = recyclerView.getChildViewHolder(child);
-                onItemClick(vh);
+
+                onItemClick(vh, position);
             }
             return true;
         }

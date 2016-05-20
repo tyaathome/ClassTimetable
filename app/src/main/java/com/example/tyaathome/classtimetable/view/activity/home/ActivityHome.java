@@ -97,7 +97,9 @@ public class ActivityHome extends ActivityBaseWithTitle {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.iv_add:
-
+                    int index = viewPager.getCurrentItem();
+                    FragmentClassTimetable fragment = (FragmentClassTimetable) fragmentList.get(index);
+                    fragment.addItem("add");
                     break;
                 case R.id.iv_settings:
                     Intent intent = new Intent(ActivityHome.this, ActivitySettings.class);
