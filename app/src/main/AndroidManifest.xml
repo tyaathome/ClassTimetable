@@ -21,6 +21,12 @@
             android:name=".view.activity.settings.ActivitySettings"
             android:exported="false"
             android:screenOrientation="portrait"/>
+
+        <!-- add -->
+        <activity
+            android:name=".view.activity.add.ActivityAddTimetable"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

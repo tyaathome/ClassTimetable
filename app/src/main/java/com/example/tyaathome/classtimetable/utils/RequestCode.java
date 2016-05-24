@@ -5,4 +5,5 @@ package com.example.tyaathome.classtimetable.utils;
  */
 public class RequestCode {
     public static final int CODE_SETTINGS = 0x0;
+    public static final int CODE_ADD_TIMETABLE = 0x01;
 }

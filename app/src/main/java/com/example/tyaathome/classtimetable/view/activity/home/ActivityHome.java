@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.example.tyaathome.classtimetable.R;
 import com.example.tyaathome.classtimetable.utils.RequestCode;
 import com.example.tyaathome.classtimetable.utils.Utils;
+import com.example.tyaathome.classtimetable.view.activity.add.ActivityAddTimetable;
 import com.example.tyaathome.classtimetable.view.activity.base.ActivityBaseWithTitle;
 import com.example.tyaathome.classtimetable.view.activity.settings.ActivitySettings;
 import com.example.tyaathome.classtimetable.view.adapter.AdapterWeekFragment;
@@ -96,15 +97,19 @@ public class ActivityHome extends ActivityBaseWithTitle {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.iv_add:
-                    int index = viewPager.getCurrentItem();
-                    FragmentClassTimetable fragment = (FragmentClassTimetable) fragmentList.get(index);
-                    fragment.addItem("add");
+                case R.id.iv_add: {
+//                    int index = viewPager.getCurrentItem();
+//                    FragmentClassTimetable fragment = (FragmentClassTimetable) fragmentList.get(index);
+//                    fragment.addItem("add");
+                    Intent intent = new Intent(ActivityHome.this, ActivityAddTimetable.class);
+                    startActivityForResult(intent, RequestCode.CODE_ADD_TIMETABLE);
                     break;
-                case R.id.iv_settings:
+                }
+                case R.id.iv_settings: {
                     Intent intent = new Intent(ActivityHome.this, ActivitySettings.class);
                     startActivityForResult(intent, RequestCode.CODE_SETTINGS);
                     break;
+                }
             }
         }
     };
