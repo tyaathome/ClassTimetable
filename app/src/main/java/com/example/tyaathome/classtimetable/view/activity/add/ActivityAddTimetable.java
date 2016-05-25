@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tyaathome.classtimetable.R;
+import com.example.tyaathome.classtimetable.view.myview.ColorPickerDialog;
 import com.example.tyaathome.classtimetable.view.myview.MyOnTimePickerClickListener;
 import com.example.tyaathome.classtimetable.view.myview.TimePickerDialog;
 
@@ -54,6 +55,7 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
         tvPm = (TextView) findViewById(R.id.tv_pm);
         etTitle = (EditText) findViewById(R.id.et_title);
         etInfo = (EditText) findViewById(R.id.et_info);
+        tvPickColor = (TextView) findViewById(R.id.tv_pick_color);
     }
 
     private void initEvent() {
@@ -61,6 +63,7 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
         tvSave.setOnClickListener(this);
         tvAm.setOnClickListener(this);
         tvPm.setOnClickListener(this);
+        tvPickColor.setOnClickListener(this);
     }
 
     private void initData() {
@@ -100,6 +103,16 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
                     @Override
                     public void onClick(Calendar calendar, int hourOfDay, int minute) {
                         setDate(tvPm, calendar);
+                    }
+                });
+                dialog.show();
+                break;
+            }
+            case R.id.tv_pick_color : {
+                ColorPickerDialog dialog = new ColorPickerDialog(this, new ColorPickerDialog.ColorPickerItemClickListener() {
+                    @Override
+                    public void onItemClick() {
+
                     }
                 });
                 dialog.show();
