@@ -52,7 +52,7 @@
             android:layout_marginTop="@dimen/margin_normal"
             android:padding="@dimen/padding_normal"
             android:text="@string/pick_color"
-            android:textColor="@color/text_black_common"
+            android:textColor="@android:color/white"
             android:textSize="@dimen/text_normal"/>
 
         <LinearLayout

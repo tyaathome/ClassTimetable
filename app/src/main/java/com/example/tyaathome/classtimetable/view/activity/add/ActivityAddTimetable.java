@@ -2,6 +2,7 @@ package com.example.tyaathome.classtimetable.view.activity.add;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -15,6 +16,7 @@ import com.example.tyaathome.classtimetable.view.myview.TimePickerDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Random;
 
 /**
  * Created by tyaathome on 2016/5/24.
@@ -28,6 +30,9 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
     private TextView tvPickColor;
     private TextView tvAm;
     private TextView tvPm;
+
+    private String[] mColors;
+    private int nCurrentColorIndex = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +74,18 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
     private void initData() {
         setDate(tvAm, Calendar.getInstance());
         setDate(tvPm, Calendar.getInstance());
+
+        mColors = getResources().getStringArray(R.array.colors);
+        Random random = new Random();
+        nCurrentColorIndex = random.nextInt(16);
+        setPickColorBackground(nCurrentColorIndex);
+    }
+
+    private void setPickColorBackground(int index) {
+        if(mColors.length > index) {
+            nCurrentColorIndex = index;
+            tvPickColor.setBackgroundColor(Color.parseColor(mColors[nCurrentColorIndex]));
+        }
     }
 
     private void setDate(TextView tv, Calendar calendar) {
@@ -111,8 +128,8 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
             case R.id.tv_pick_color : {
                 ColorPickerDialog dialog = new ColorPickerDialog(this, new ColorPickerDialog.ColorPickerItemClickListener() {
                     @Override
-                    public void onItemClick() {
-
+                    public void onItemClick(int position) {
+                        setPickColorBackground(position);
                     }
                 });
                 dialog.show();

@@ -55,7 +55,7 @@ public class ColorPickerDialog extends Dialog {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(listener != null) {
-                    listener.onItemClick();
+                    listener.onItemClick(position);
                 }
                 dismiss();
             }
@@ -69,6 +69,6 @@ public class ColorPickerDialog extends Dialog {
     }
 
     public interface ColorPickerItemClickListener {
-        void onItemClick();
+        void onItemClick(int position);
     }
 }
