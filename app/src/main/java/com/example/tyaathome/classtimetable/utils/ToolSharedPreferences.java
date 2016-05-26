@@ -100,7 +100,7 @@ public class ToolSharedPreferences {
 
     public final static boolean getBoolean(Context context, String preferencesName, String key) {
         SharedPreferences shared = context.getSharedPreferences(preferencesName, Context.MODE_PRIVATE);
-        return shared.getBoolean(key, false);
+        return shared.getBoolean(key, true);
     }
 
     public final static void setBoolean(Context context, String preferencesName, String key, Boolean value) {

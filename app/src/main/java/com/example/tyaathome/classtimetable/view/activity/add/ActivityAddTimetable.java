@@ -9,12 +9,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.tyaathome.classtimetable.R;
+import com.example.tyaathome.classtimetable.model.DayInfo;
 import com.example.tyaathome.classtimetable.model.TimetableInfo;
+import com.example.tyaathome.classtimetable.utils.ToolSharedPreferences;
 import com.example.tyaathome.classtimetable.view.myview.ColorPickerDialog;
 import com.example.tyaathome.classtimetable.view.myview.MyOnTimePickerClickListener;
 import com.example.tyaathome.classtimetable.view.myview.TimePickerDialog;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Random;
 
@@ -33,6 +36,7 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
 
     private String[] mColors;
     private int nCurrentColorIndex = -1;
+    private int nCurrentPage = -1;
 
     private Calendar amCalendar = Calendar.getInstance();
     private Calendar pmCalendar = Calendar.getInstance();
@@ -82,6 +86,8 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
         Random random = new Random();
         nCurrentColorIndex = random.nextInt(16);
         setPickColorBackground(nCurrentColorIndex);
+
+        nCurrentPage = getIntent().getIntExtra("index", -1);
     }
 
     private void setPickColorBackground(int index) {
@@ -112,6 +118,11 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
         info.amCal.setTime(amCalendar.getTime());
         info.pmCal.setTime(pmCalendar.getTime());
         info.info = etInfo.getText().toString();
+        ArrayList<DayInfo> list = (ArrayList<DayInfo>) ToolSharedPreferences.getList(this, ToolSharedPreferences.SHARED_PREFERENCES_MAIN, ToolSharedPreferences.KEY_TIMETABLE_LIST);
+        if(list != null && list.size() > nCurrentPage) {
+            list.get(nCurrentPage).infos.add(info);
+        }
+        ToolSharedPreferences.setList(this, ToolSharedPreferences.SHARED_PREFERENCES_MAIN, ToolSharedPreferences.KEY_TIMETABLE_LIST, list);
         return info;
     }
 

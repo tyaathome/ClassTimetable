@@ -36,6 +36,8 @@ public class ActivityHome extends ActivityBaseWithTitle {
 
     private AdapterWeekFragment adapterWeekFragment = null;
 
+    private int nCurrentPage = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +66,7 @@ public class ActivityHome extends ActivityBaseWithTitle {
                     showToast("Settings!");
                     break;
                 case RequestCode.CODE_ADD_TIMETABLE:
-
+                    updateData();
                     break;
             }
         }
@@ -101,10 +103,8 @@ public class ActivityHome extends ActivityBaseWithTitle {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.iv_add: {
-//                    int index = viewPager.getCurrentItem();
-//                    FragmentClassTimetable fragment = (FragmentClassTimetable) fragmentList.get(index);
-//                    fragment.addItem("add");
                     Intent intent = new Intent(ActivityHome.this, ActivityAddTimetable.class);
+                    intent.putExtra("index", getCurrentPage(nCurrentPage));
                     startActivityForResult(intent, RequestCode.CODE_ADD_TIMETABLE);
                     break;
                 }
@@ -126,7 +126,7 @@ public class ActivityHome extends ActivityBaseWithTitle {
 
             @Override
             public void onPageSelected(int position) {
-
+                nCurrentPage = position;
             }
 
             @Override
@@ -153,6 +153,8 @@ public class ActivityHome extends ActivityBaseWithTitle {
 
         adapterWeekFragment = new AdapterWeekFragment(getSupportFragmentManager(), fragmentList);
         viewPager.setAdapter(adapterWeekFragment);
+
+        updateData();
     }
 
     private ArrayList<DayInfo> initTimetable() {
@@ -207,5 +209,28 @@ public class ActivityHome extends ActivityBaseWithTitle {
         }
 
         return -1;
+    }
+
+    private int getCurrentPage(int index) {
+        boolean isWeekend = ToolSharedPreferences.getBoolean(this, ToolSharedPreferences.SHARED_PREFERENCES_MAIN, ToolSharedPreferences.KEY_WEEKEND_DAY);
+        if(!isWeekend) {
+            //index = index + 1;
+            int weekCount = index / 5;
+            int week = index % 5;
+            return weekCount*7 + week;
+        }
+        return index;
+    }
+
+    private List<DayInfo> getDayInfo() {
+        return (List<DayInfo>) ToolSharedPreferences.getList(this, ToolSharedPreferences.SHARED_PREFERENCES_MAIN, ToolSharedPreferences.KEY_TIMETABLE_LIST);
+    }
+
+    private void updateData() {
+        ArrayList<DayInfo> list = (ArrayList<DayInfo>) getDayInfo();
+        int index = getCurrentPage(nCurrentPage);
+        DayInfo info = list.get(index);
+        FragmentClassTimetable fragment = (FragmentClassTimetable) fragmentList.get(nCurrentPage);
+        fragment.setData(info.infos);
     }
 }

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tyaathome.classtimetable.R;
@@ -28,6 +29,8 @@ public class FragmentClassTimetable extends Fragment {
     private String mPageName = "";
 
     private RecyclerView recyclerView = null;
+    private TextView tvNoEvent = null;
+
     private AdapterClassTimeTable adapter = null;
 
     private List<TimetableInfo> listdata = new ArrayList<TimetableInfo>();
@@ -55,17 +58,21 @@ public class FragmentClassTimetable extends Fragment {
                 LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        tvNoEvent = (TextView) getView().findViewById(R.id.tv_no_event);
+
+        updateIU();
     }
 
     private void initEvent() {
         recyclerView.addOnItemTouchListener(new OnMyItemClickListener(recyclerView) {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh, int position) {
-                View newView = recyclerView.getLayoutManager().findViewByPosition(position);
-                RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) newView.getLayoutParams();
-                int height = params.height*2;
-                newView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
-                nCurrentClickedPosition = position;
+//                View newView = recyclerView.getLayoutManager().findViewByPosition(position);
+//                RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) newView.getLayoutParams();
+//                int height = params.height*2;
+//                newView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
+//                nCurrentClickedPosition = position;
             }
         });
     }
@@ -86,15 +93,32 @@ public class FragmentClassTimetable extends Fragment {
     public void setData(List<TimetableInfo> listdata) {
         this.listdata.clear();
         this.listdata.addAll(listdata);
+        if(adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
     }
 
     public void addItem(TimetableInfo info) {
         this.listdata.add(info);
-        adapter.notifyItemInserted(this.listdata.size()-1);
+        if(adapter != null) {
+            adapter.notifyItemInserted(this.listdata.size() - 1);
+        }
     }
 
     public void removeItem(int position) {
         this.listdata.remove(position);
-        adapter.notifyItemRemoved(position);
+        if(adapter != null) {
+            adapter.notifyItemRemoved(position);
+        }
+    }
+
+    private void updateIU() {
+        if(listdata != null && listdata.size() > 0) {
+            tvNoEvent.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        } else {
+            tvNoEvent.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        }
     }
 }
