@@ -96,6 +96,7 @@ public class FragmentClassTimetable extends Fragment {
         if(adapter != null) {
             adapter.notifyDataSetChanged();
         }
+        updateIU();
     }
 
     public void addItem(TimetableInfo info) {
@@ -112,7 +113,10 @@ public class FragmentClassTimetable extends Fragment {
         }
     }
 
-    private void updateIU() {
+    public void updateIU() {
+        if(tvNoEvent == null || recyclerView == null) {
+            return;
+        }
         if(listdata != null && listdata.size() > 0) {
             tvNoEvent.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
