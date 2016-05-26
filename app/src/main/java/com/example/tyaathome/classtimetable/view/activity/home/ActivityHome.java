@@ -1,32 +1,32 @@
 package com.example.tyaathome.classtimetable.view.activity.home;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.example.tyaathome.classtimetable.R;
+import com.example.tyaathome.classtimetable.model.DayInfo;
 import com.example.tyaathome.classtimetable.utils.RequestCode;
-import com.example.tyaathome.classtimetable.utils.Utils;
+import com.example.tyaathome.classtimetable.utils.ToolSharedPreferences;
 import com.example.tyaathome.classtimetable.view.activity.add.ActivityAddTimetable;
 import com.example.tyaathome.classtimetable.view.activity.base.ActivityBaseWithTitle;
 import com.example.tyaathome.classtimetable.view.activity.settings.ActivitySettings;
 import com.example.tyaathome.classtimetable.view.adapter.AdapterWeekFragment;
 import com.example.tyaathome.classtimetable.view.fragment.FragmentClassTimetable;
 
+import java.text.DateFormatSymbols;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ActivityHome extends ActivityBaseWithTitle {
 
@@ -62,6 +62,9 @@ public class ActivityHome extends ActivityBaseWithTitle {
             switch (requestCode) {
                 case RequestCode.CODE_SETTINGS:
                     showToast("Settings!");
+                    break;
+                case RequestCode.CODE_ADD_TIMETABLE:
+
                     break;
             }
         }
@@ -134,50 +137,75 @@ public class ActivityHome extends ActivityBaseWithTitle {
     }
 
     private void initData() {
+        ArrayList<DayInfo> infos = initTimetable();
+        boolean isWeekendDays = isWeekendDays();
 
-        List<String> listdata = new ArrayList<String>();
-        listdata.add("1111111111111");
-        listdata.add("2222222222222");
-        listdata.add("3333333333333");
-        listdata.add("4444444444444");
-        listdata.add("5555555555555");
-
-        List<String> listdata2 = new ArrayList<String>();
-        listdata2.add("2222222222222");
-        listdata2.add("2222222222222");
-        listdata2.add("2222222222222");
-        listdata2.add("2222222222222");
-        listdata2.add("2222222222222");
-
-        List<String> listdata3 = new ArrayList<String>();
-        listdata3.add("3333333333333");
-        listdata3.add("3333333333333");
-        listdata3.add("3333333333333");
-        listdata3.add("3333333333333");
-        listdata3.add("3333333333333");
-
-        FragmentClassTimetable f1 = new FragmentClassTimetable();
-        f1.setData(listdata);
-        FragmentClassTimetable f2 = new FragmentClassTimetable();
-        f2.setData(listdata2);
-        FragmentClassTimetable f3 = new FragmentClassTimetable();
-        f3.setData(listdata3);
-        f1.setPageName("f11111111111");
-        f2.setPageName("f22222222222");
-        f3.setPageName("f33333333333");
-        fragmentList.add(f1);
-        fragmentList.add(f2);
-        fragmentList.add(f3);
-
-
-//        for(int i = 0; i < 28; i++) {
-//            FragmentClassTimetable f = new FragmentClassTimetable();
-//            f.setData(listdata);
-//            f.setPageName(String.valueOf(i));
-//            fragmentList.add(f);
-//        }
+        for(DayInfo info : infos) {
+            int i = parseDayOfWeek(info.pageName);
+            if(!isWeekendDays && (i == 1 || i == 7)) {
+                continue;
+            }
+            FragmentClassTimetable f = new FragmentClassTimetable();
+            f.setData(info.infos);
+            f.setPageName(info.pageName);
+            fragmentList.add(f);
+        }
 
         adapterWeekFragment = new AdapterWeekFragment(getSupportFragmentManager(), fragmentList);
         viewPager.setAdapter(adapterWeekFragment);
+    }
+
+    private ArrayList<DayInfo> initTimetable() {
+        ArrayList<DayInfo> infos = (ArrayList<DayInfo>) ToolSharedPreferences.getList(ActivityHome.this, ToolSharedPreferences.SHARED_PREFERENCES_MAIN, ToolSharedPreferences.KEY_TIMETABLE_LIST);
+        if(infos == null) {
+            infos = new ArrayList<DayInfo>();
+            for(int i = 0; i < 4; i++) {
+                String[] weekDay = getWeekdays();
+                for (int j = 0; j < weekDay.length; j++) {
+                    DayInfo dayInfo = new DayInfo();
+                    dayInfo.pageName = weekDay[j];
+                    infos.add(dayInfo);
+                }
+            }
+        } else {
+            for(int i = 0; i < 4; i++) {
+                String[] weekDay = getWeekdays();
+                for(int j = 0; j < weekDay.length; j++) {
+                    infos.get(i*7 + j).pageName = weekDay[j];
+                }
+            }
+        }
+        ToolSharedPreferences.setList(ActivityHome.this, ToolSharedPreferences.SHARED_PREFERENCES_MAIN, ToolSharedPreferences.KEY_TIMETABLE_LIST, infos);
+        return infos;
+    }
+
+    private boolean isWeekendDays() {
+        return ToolSharedPreferences.getBoolean(ActivityHome.this, ToolSharedPreferences.SHARED_PREFERENCES_MAIN, ToolSharedPreferences.KEY_WEEKEND_DAY);
+    }
+
+    private String[] getWeekdays() {
+        String[] weekDay = DateFormatSymbols.getInstance().getWeekdays();
+        String[] result = new String[7];
+        for(int i = 2; i < weekDay.length; i++) {
+            result[i-2] = weekDay[i];
+        }
+        result[6] = weekDay[1];
+        return result;
+    }
+
+    private int parseDayOfWeek(String day) {
+        Locale locale = getResources().getConfiguration().locale;
+        SimpleDateFormat dayFormat = new SimpleDateFormat("E", locale);
+        try {
+            Date date = dayFormat.parse(day);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+            return dayOfWeek;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return -1;
     }
 }

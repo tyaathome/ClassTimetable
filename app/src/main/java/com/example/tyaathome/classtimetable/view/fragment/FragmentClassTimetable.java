@@ -9,9 +9,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.tyaathome.classtimetable.R;
+import com.example.tyaathome.classtimetable.model.TimetableInfo;
 import com.example.tyaathome.classtimetable.view.adapter.AdapterClassTimeTable;
 import com.example.tyaathome.classtimetable.view.myview.OnMyItemClickListener;
 
@@ -28,7 +30,9 @@ public class FragmentClassTimetable extends Fragment {
     private RecyclerView recyclerView = null;
     private AdapterClassTimeTable adapter = null;
 
-    private List<String> listdata = new ArrayList<String>();
+    private List<TimetableInfo> listdata = new ArrayList<TimetableInfo>();
+
+    private int nCurrentClickedPosition = -1;
 
     @Nullable
     @Override
@@ -57,8 +61,11 @@ public class FragmentClassTimetable extends Fragment {
         recyclerView.addOnItemTouchListener(new OnMyItemClickListener(recyclerView) {
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh, int position) {
-                Toast.makeText(getActivity(), String.valueOf(position), Toast.LENGTH_LONG).show();
-                adapter.notifyItemChanged(position);
+                View newView = recyclerView.getLayoutManager().findViewByPosition(position);
+                RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) newView.getLayoutParams();
+                int height = params.height*2;
+                newView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
+                nCurrentClickedPosition = position;
             }
         });
     }
@@ -76,13 +83,13 @@ public class FragmentClassTimetable extends Fragment {
         return mPageName;
     }
 
-    public void setData(List<String> listdata) {
+    public void setData(List<TimetableInfo> listdata) {
         this.listdata.clear();
         this.listdata.addAll(listdata);
     }
 
-    public void addItem(String str) {
-        this.listdata.add(str);
+    public void addItem(TimetableInfo info) {
+        this.listdata.add(info);
         adapter.notifyItemInserted(this.listdata.size()-1);
     }
 

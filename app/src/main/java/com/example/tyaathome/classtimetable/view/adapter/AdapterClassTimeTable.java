@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.tyaathome.classtimetable.R;
+import com.example.tyaathome.classtimetable.model.TimetableInfo;
 import com.example.tyaathome.classtimetable.utils.Utils;
 
 import java.util.ArrayList;
@@ -21,9 +22,9 @@ import java.util.List;
 public class AdapterClassTimeTable extends RecyclerView.Adapter<AdapterClassTimeTable.ViewHolder> {
 
     private Context context;
-    private List<String> listdata = new ArrayList<String>();
+    private List<TimetableInfo> listdata = new ArrayList<TimetableInfo>();
 
-    public AdapterClassTimeTable(Context context, List<String> listdata) {
+    public AdapterClassTimeTable(Context context, List<TimetableInfo> listdata) {
         this.context = context;
         this.listdata = listdata;
     }
@@ -36,7 +37,7 @@ public class AdapterClassTimeTable extends RecyclerView.Adapter<AdapterClassTime
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.tv.setText(listdata.get(position));
+        holder.tv.setText(listdata.get(position).title);
 
         if(holder.itemView != null) {
             holder.itemView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup
@@ -50,7 +51,7 @@ public class AdapterClassTimeTable extends RecyclerView.Adapter<AdapterClassTime
         return listdata.size();
     }
 
-    public void setData(List<String> listdata) {
+    public void setData(List<TimetableInfo> listdata) {
         this.listdata.clear();
         this.listdata.addAll(listdata);
         notifyDataSetChanged();

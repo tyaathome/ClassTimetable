@@ -8,4 +8,6 @@
     <color name="line_list_divider">#E1E1E1</color>
 
     <color name="text_black_common">#646464</color>
+    <color name="alpha100">#00000000</color>
+    <color name="white_alpha50">#80ffffff</color>
 </resources>

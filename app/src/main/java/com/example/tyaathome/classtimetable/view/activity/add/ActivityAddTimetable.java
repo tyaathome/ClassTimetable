@@ -1,15 +1,15 @@
 package com.example.tyaathome.classtimetable.view.activity.add;
 
 import android.app.Activity;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.tyaathome.classtimetable.R;
+import com.example.tyaathome.classtimetable.model.TimetableInfo;
 import com.example.tyaathome.classtimetable.view.myview.ColorPickerDialog;
 import com.example.tyaathome.classtimetable.view.myview.MyOnTimePickerClickListener;
 import com.example.tyaathome.classtimetable.view.myview.TimePickerDialog;
@@ -33,6 +33,9 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
 
     private String[] mColors;
     private int nCurrentColorIndex = -1;
+
+    private Calendar amCalendar = Calendar.getInstance();
+    private Calendar pmCalendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +75,8 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
     }
 
     private void initData() {
-        setDate(tvAm, Calendar.getInstance());
-        setDate(tvPm, Calendar.getInstance());
+        setAmDate(Calendar.getInstance());
+        setPmDate(Calendar.getInstance());
 
         mColors = getResources().getStringArray(R.array.colors);
         Random random = new Random();
@@ -88,10 +91,28 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
         }
     }
 
-    private void setDate(TextView tv, Calendar calendar) {
+    private void setAmDate(Calendar calendar) {
         SimpleDateFormat format = new SimpleDateFormat("a h:mm");
+        amCalendar.setTime(calendar.getTime());
         String result = format.format(calendar.getTime());
-        tv.setText(result);
+        tvAm.setText(result);
+    }
+
+    private void setPmDate(Calendar calendar) {
+        SimpleDateFormat format = new SimpleDateFormat("a h:mm");
+        pmCalendar.setTime(calendar.getTime());
+        String result = format.format(calendar.getTime());
+        tvPm.setText(result);
+    }
+
+    private TimetableInfo saveInfo() {
+        TimetableInfo info = new TimetableInfo();
+        info.title = etTitle.getText().toString();
+        info.color = mColors[nCurrentColorIndex];
+        info.amCal.setTime(amCalendar.getTime());
+        info.pmCal.setTime(pmCalendar.getTime());
+        info.info = etInfo.getText().toString();
+        return info;
     }
 
     @Override
@@ -102,14 +123,16 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
                 finish();
                 break;
             case R.id.tv_save :
-                setResult(Activity.RESULT_OK);
+                Intent intent = new Intent();
+                intent.putExtra("info", saveInfo());
+                setResult(Activity.RESULT_OK, intent);
                 finish();
                 break;
             case R.id.tv_am : {
                 TimePickerDialog dialog = new TimePickerDialog(this, new MyOnTimePickerClickListener() {
                     @Override
                     public void onClick(Calendar calendar, int hourOfDay, int minute) {
-                        setDate(tvAm, calendar);
+                        setAmDate(calendar);
                     }
                 });
                 dialog.show();
@@ -119,7 +142,7 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
                 TimePickerDialog dialog = new TimePickerDialog(this, new MyOnTimePickerClickListener() {
                     @Override
                     public void onClick(Calendar calendar, int hourOfDay, int minute) {
-                        setDate(tvPm, calendar);
+                        setPmDate(calendar);
                     }
                 });
                 dialog.show();
