@@ -61,7 +61,7 @@
             android:layout_marginTop="@dimen/margin_normal">
 
             <TextView
-                android:id="@+id/tv_am"
+                android:id="@+id/tv_start"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -70,7 +70,7 @@
                 android:textSize="@dimen/text_normal"/>
 
             <TextView
-                android:id="@+id/tv_pm"
+                android:id="@+id/tv_end"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"

@@ -59,10 +59,8 @@ public class ActivityBase extends FragmentActivity {
         mToast.show();*/
     }
 
-    public void showPopupWindow(final TextView tvView, final List<String> listData, final ItemClick listener) {
-        // 一个自定义的布局，作为显示的内容
+    public void showPopupWindow(View view, final List<String> listData, int width, final ItemClick listener) {
         View contentView = LayoutInflater.from(this).inflate(R.layout.pop_main_layout, null);
-        // 设置按钮的点击事件
         ListView chose_listview = (ListView) contentView.findViewById(R.id.chose_listview);
         AdapterTitleDraw adapter = new AdapterTitleDraw(listData);
         chose_listview.setAdapter(adapter);
@@ -70,7 +68,6 @@ public class ActivityBase extends FragmentActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 dimissPop();
-                tvView.setText(listData.get(position));
                 if (listener != null) {
                     listener.itemClick(position);
                 }
@@ -80,12 +77,10 @@ public class ActivityBase extends FragmentActivity {
                 .LayoutParams.WRAP_CONTENT, true);
         topChangerpopupWindow.setTouchable(true);
         topChangerpopupWindow.setBackgroundDrawable(getResources().getDrawable(R.color.alpha100));
-        int width = tvView.getWidth();
-        // 设置好参数之后再show
         int off = 0;
 //        int off = tvView.getWidth() / 4;
         topChangerpopupWindow.setWidth(width);
-        topChangerpopupWindow.showAsDropDown(tvView, -off, 0);
+        topChangerpopupWindow.showAsDropDown(view, -off, 0);
     }
 
     private void dimissPop() {

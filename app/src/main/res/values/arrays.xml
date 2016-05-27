@@ -18,4 +18,11 @@
         <item>#D864A5</item>
         <item>#F980C3</item>
     </string-array>
+
+    <string-array name="week_number">
+        <item>Week One</item>
+        <item>Week Two</item>
+        <item>Week Three</item>
+        <item>Week Four</item>
+    </string-array>
 </resources>

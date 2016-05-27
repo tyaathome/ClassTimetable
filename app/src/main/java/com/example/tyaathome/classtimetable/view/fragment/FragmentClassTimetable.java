@@ -14,8 +14,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tyaathome.classtimetable.R;
+import com.example.tyaathome.classtimetable.model.DayInfo;
 import com.example.tyaathome.classtimetable.model.TimetableInfo;
+import com.example.tyaathome.classtimetable.utils.ToolSharedPreferences;
 import com.example.tyaathome.classtimetable.view.adapter.AdapterClassTimeTable;
+import com.example.tyaathome.classtimetable.view.myview.ItemClick;
 import com.example.tyaathome.classtimetable.view.myview.OnMyItemClickListener;
 
 import java.util.ArrayList;
@@ -27,6 +30,7 @@ import java.util.List;
 public class FragmentClassTimetable extends Fragment {
 
     private String mPageName = "";
+    private int mCurrentPage;
 
     private RecyclerView recyclerView = null;
     private TextView tvNoEvent = null;
@@ -79,6 +83,14 @@ public class FragmentClassTimetable extends Fragment {
 
     private void initData() {
         adapter = new AdapterClassTimeTable(getActivity(), listdata);
+        adapter.setDeletListener(new ItemClick() {
+            @Override
+            public void itemClick(Object obj) {
+                int position = (int) obj;
+                removeItem(position);
+            }
+        });
+
         recyclerView.setAdapter(adapter);
     }
 
@@ -88,6 +100,10 @@ public class FragmentClassTimetable extends Fragment {
 
     public String getPageName() {
         return mPageName;
+    }
+
+    public void setCurrentPage(int page) {
+        mCurrentPage = page;
     }
 
     public void setData(List<TimetableInfo> listdata) {
@@ -107,9 +123,19 @@ public class FragmentClassTimetable extends Fragment {
     }
 
     public void removeItem(int position) {
-        this.listdata.remove(position);
-        if(adapter != null) {
-            adapter.notifyItemRemoved(position);
+        if(listdata.size() > position) {
+            this.listdata.remove(position);
+            if (adapter != null) {
+                adapter.notifyItemRemoved(position);
+            }
+            // update ui
+            updateIU();
+            // save list
+            ArrayList<DayInfo> list = (ArrayList<DayInfo>) ToolSharedPreferences.getList(getActivity(), ToolSharedPreferences.SHARED_PREFERENCES_MAIN, ToolSharedPreferences.KEY_TIMETABLE_LIST);
+            if(list != null && list.size() > mCurrentPage) {
+                list.get(mCurrentPage).infos = listdata;
+            }
+            ToolSharedPreferences.setList(getActivity(), ToolSharedPreferences.SHARED_PREFERENCES_MAIN, ToolSharedPreferences.KEY_TIMETABLE_LIST, list);
         }
     }
 

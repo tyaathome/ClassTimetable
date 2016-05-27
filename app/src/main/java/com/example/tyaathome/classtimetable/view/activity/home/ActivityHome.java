@@ -1,6 +1,8 @@
 package com.example.tyaathome.classtimetable.view.activity.home;
 
 import android.content.Intent;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
@@ -8,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.tyaathome.classtimetable.R;
 import com.example.tyaathome.classtimetable.model.DayInfo;
@@ -18,11 +21,13 @@ import com.example.tyaathome.classtimetable.view.activity.base.ActivityBaseWithT
 import com.example.tyaathome.classtimetable.view.activity.settings.ActivitySettings;
 import com.example.tyaathome.classtimetable.view.adapter.AdapterWeekFragment;
 import com.example.tyaathome.classtimetable.view.fragment.FragmentClassTimetable;
+import com.example.tyaathome.classtimetable.view.myview.ItemClick;
 
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -63,7 +68,6 @@ public class ActivityHome extends ActivityBaseWithTitle {
         if(resultCode == RESULT_OK) {
             switch (requestCode) {
                 case RequestCode.CODE_SETTINGS:
-                    showToast("Settings!");
                     break;
                 case RequestCode.CODE_ADD_TIMETABLE:
                     updateData();
@@ -79,11 +83,41 @@ public class ActivityHome extends ActivityBaseWithTitle {
     }
 
     private void initLeftView() {
-        LinearLayout llLeft = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.layout_week, null);
+        final LinearLayout llLeft = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.layout_week, null);
+
+        final TextView tv = (TextView) llLeft.findViewById(R.id.tv_week);
+
+        String[] weekNumber = getResources().getStringArray(R.array.week_number);
+        int weekIndex = getCurrentWeekIndex();
+        if(weekNumber.length > weekIndex) {
+            tv.setText(weekNumber[weekIndex]);
+        }
+
+        final List<String> weekList = Arrays.asList(weekNumber);
+
         llLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showToast("OnClick!");
+
+
+                Rect bounds = new Rect();
+                Paint textPaint = tv.getPaint();
+                String str = "Week Three";
+                textPaint.getTextBounds(str ,0,str.length(),bounds);
+                int height = bounds.height();
+                int width = bounds.width() + 10;
+
+
+                showPopupWindow(tv, weekList, width, new ItemClick() {
+                    @Override
+                    public void itemClick(Object obj) {
+                        int position = (int) obj;
+                        tv.setText(weekList.get(position));
+                        int page = getWeekPageIndex(position);
+                        viewPager.setCurrentItem(page);
+
+                    }
+                });
             }
         });
         addViewToLeft(llLeft);
@@ -109,8 +143,9 @@ public class ActivityHome extends ActivityBaseWithTitle {
                     break;
                 }
                 case R.id.iv_settings: {
-                    Intent intent = new Intent(ActivityHome.this, ActivitySettings.class);
-                    startActivityForResult(intent, RequestCode.CODE_SETTINGS);
+//                    Intent intent = new Intent(ActivityHome.this, ActivitySettings.class);
+//                    startActivityForResult(intent, RequestCode.CODE_SETTINGS);
+                    showToast(getResources().getString(R.string.comming_soon));
                     break;
                 }
             }
@@ -146,6 +181,7 @@ public class ActivityHome extends ActivityBaseWithTitle {
                 continue;
             }
             FragmentClassTimetable f = new FragmentClassTimetable();
+            f.setCurrentPage(getCurrentPage(infos.indexOf(info)));
             f.setData(info.infos);
             f.setPageName(info.pageName);
             fragmentList.add(f);
@@ -220,6 +256,24 @@ public class ActivityHome extends ActivityBaseWithTitle {
             return weekCount*7 + week;
         }
         return index;
+    }
+
+    private int getWeekPageIndex(int weekindex) {
+        boolean isWeekend = ToolSharedPreferences.getBoolean(this, ToolSharedPreferences.SHARED_PREFERENCES_MAIN, ToolSharedPreferences.KEY_WEEKEND_DAY);
+        if(isWeekend) {
+            return weekindex * 7;
+        } else {
+            return weekindex * 5;
+        }
+    }
+
+    private int getCurrentWeekIndex() {
+        boolean isWeekend = ToolSharedPreferences.getBoolean(this, ToolSharedPreferences.SHARED_PREFERENCES_MAIN, ToolSharedPreferences.KEY_WEEKEND_DAY);
+        if(isWeekend) {
+            return nCurrentPage / 7;
+        } else {
+            return nCurrentPage / 5;
+        }
     }
 
     private List<DayInfo> getDayInfo() {

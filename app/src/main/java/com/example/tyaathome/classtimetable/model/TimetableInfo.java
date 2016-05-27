@@ -8,8 +8,8 @@ import java.util.Calendar;
  */
 public class TimetableInfo implements Serializable {
     public String title = "";
-    public String color = "";
-    public Calendar amCal = Calendar.getInstance();
-    public Calendar pmCal = Calendar.getInstance();
+    public String color;
+    public Calendar startCal = Calendar.getInstance();
+    public Calendar endCal = Calendar.getInstance();
     public String info = "";
 }

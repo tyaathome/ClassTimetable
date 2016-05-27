@@ -31,15 +31,15 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
     private EditText etTitle;
     private EditText etInfo;
     private TextView tvPickColor;
-    private TextView tvAm;
-    private TextView tvPm;
+    private TextView tvStart;
+    private TextView tvEnd;
 
     private String[] mColors;
     private int nCurrentColorIndex = -1;
     private int nCurrentPage = -1;
 
-    private Calendar amCalendar = Calendar.getInstance();
-    private Calendar pmCalendar = Calendar.getInstance();
+    private Calendar startCalendar = Calendar.getInstance();
+    private Calendar endCalendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +63,8 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
     private void initView() {
         tvCancel = (TextView) findViewById(R.id.tv_cancel);
         tvSave = (TextView) findViewById(R.id.tv_save);
-        tvAm = (TextView) findViewById(R.id.tv_am);
-        tvPm = (TextView) findViewById(R.id.tv_pm);
+        tvStart = (TextView) findViewById(R.id.tv_start);
+        tvEnd = (TextView) findViewById(R.id.tv_end);
         etTitle = (EditText) findViewById(R.id.et_title);
         etInfo = (EditText) findViewById(R.id.et_info);
         tvPickColor = (TextView) findViewById(R.id.tv_pick_color);
@@ -73,8 +73,8 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
     private void initEvent() {
         tvCancel.setOnClickListener(this);
         tvSave.setOnClickListener(this);
-        tvAm.setOnClickListener(this);
-        tvPm.setOnClickListener(this);
+        tvStart.setOnClickListener(this);
+        tvEnd.setOnClickListener(this);
         tvPickColor.setOnClickListener(this);
     }
 
@@ -99,24 +99,24 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
 
     private void setAmDate(Calendar calendar) {
         SimpleDateFormat format = new SimpleDateFormat("a h:mm");
-        amCalendar.setTime(calendar.getTime());
+        startCalendar.setTime(calendar.getTime());
         String result = format.format(calendar.getTime());
-        tvAm.setText(result);
+        tvStart.setText(result);
     }
 
     private void setPmDate(Calendar calendar) {
         SimpleDateFormat format = new SimpleDateFormat("a h:mm");
-        pmCalendar.setTime(calendar.getTime());
+        endCalendar.setTime(calendar.getTime());
         String result = format.format(calendar.getTime());
-        tvPm.setText(result);
+        tvEnd.setText(result);
     }
 
     private TimetableInfo saveInfo() {
         TimetableInfo info = new TimetableInfo();
         info.title = etTitle.getText().toString();
         info.color = mColors[nCurrentColorIndex];
-        info.amCal.setTime(amCalendar.getTime());
-        info.pmCal.setTime(pmCalendar.getTime());
+        info.startCal.setTime(startCalendar.getTime());
+        info.endCal.setTime(endCalendar.getTime());
         info.info = etInfo.getText().toString();
         ArrayList<DayInfo> list = (ArrayList<DayInfo>) ToolSharedPreferences.getList(this, ToolSharedPreferences.SHARED_PREFERENCES_MAIN, ToolSharedPreferences.KEY_TIMETABLE_LIST);
         if(list != null && list.size() > nCurrentPage) {
@@ -139,7 +139,7 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
                 setResult(Activity.RESULT_OK, intent);
                 finish();
                 break;
-            case R.id.tv_am : {
+            case R.id.tv_start: {
                 TimePickerDialog dialog = new TimePickerDialog(this, new MyOnTimePickerClickListener() {
                     @Override
                     public void onClick(Calendar calendar, int hourOfDay, int minute) {
@@ -149,7 +149,7 @@ public class ActivityAddTimetable extends Activity implements View.OnClickListen
                 dialog.show();
                 break;
             }
-            case R.id.tv_pm : {
+            case R.id.tv_end: {
                 TimePickerDialog dialog = new TimePickerDialog(this, new MyOnTimePickerClickListener() {
                     @Override
                     public void onClick(Calendar calendar, int hourOfDay, int minute) {
