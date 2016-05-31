@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.tyaathome.classtimetable.R;
@@ -81,20 +82,9 @@ public class FragmentClassTimetable extends Fragment {
                     return ;
                 }
 
-//                if(nCurrentClickedPosition != -1) {
-//                    final View oldView = recyclerView.getLayoutManager().findViewByPosition(nCurrentClickedPosition);
-//                    if(oldView != null) {
-//                        initResetAnimation(oldView);
-//                    }
-//                }
-//
-//                final View newView = recyclerView.getLayoutManager().findViewByPosition(position);
-//                initStretchAnimation(newView);
-
-                //initItemAnimation()
                 final View oldView = recyclerView.getLayoutManager().findViewByPosition(nCurrentClickedPosition);
                 final View newView = recyclerView.getLayoutManager().findViewByPosition(position);
-                initItemAnimation(oldView, newView);
+                startItemAnimation(oldView, newView);
 
                 nCurrentClickedPosition = position;
             }
@@ -172,7 +162,7 @@ public class FragmentClassTimetable extends Fragment {
         }
     }
 
-    private void initStretchAnimation(final View view) {
+    private void stretchAnimation(final View view) {
         final int height = view.getMeasuredHeight();
         AnimationUtils animationUtils = new AnimationUtils(0, 100, 500L, new MyAnimatorListenerAdapter() {
             @Override
@@ -180,6 +170,7 @@ public class FragmentClassTimetable extends Fragment {
                 super.onAnimationEnd(animation);
                 System.out.println("End");
                 isAnimationFinish = true;
+                updateUI(view, false);
             }
 
             @Override
@@ -199,7 +190,7 @@ public class FragmentClassTimetable extends Fragment {
         animationUtils.start();
     }
 
-    private void initResetAnimation(final View view) {
+    private void resetAnimation(final View view) {
         final int height = view.getMeasuredHeight();
         AnimationUtils animationUtils = new AnimationUtils(0, 100, 500L, new MyAnimatorListenerAdapter() {
             @Override
@@ -207,6 +198,7 @@ public class FragmentClassTimetable extends Fragment {
                 super.onAnimationEnd(animation);
                 System.out.println("End");
                 isAnimationFinish = true;
+                updateUI(view, true);
             }
 
             @Override
@@ -226,14 +218,14 @@ public class FragmentClassTimetable extends Fragment {
         animationUtils.start();
     }
 
-    private void initItemAnimation(View oldView, View newView) {
+    private void startItemAnimation(View oldView, View newView) {
 
         if(oldView != null && newView != null && oldView == newView) {
             int height = oldView.getMeasuredHeight();
             if(height >= 200) {
-                initResetAnimation(oldView);
+                resetAnimation(oldView);
             } else if(height <= 100) {
-                initStretchAnimation(oldView);
+                stretchAnimation(oldView);
             }
             return ;
         }
@@ -241,14 +233,29 @@ public class FragmentClassTimetable extends Fragment {
         if(oldView != null) {
             int height = oldView.getMeasuredHeight();
             if(height >= 200) {
-                initResetAnimation(oldView);
+                resetAnimation(oldView);
             }
         }
 
         if(newView != null ) {
             int height = newView.getMeasuredHeight();
             if(height <= 100) {
-                initStretchAnimation(newView);
+                stretchAnimation(newView);
+            }
+        }
+    }
+
+    private void updateUI(View view, boolean isSimple) {
+        RelativeLayout rl = (RelativeLayout) view;
+        RelativeLayout simple = (RelativeLayout) rl.findViewById(R.id.simple);
+        RelativeLayout full = (RelativeLayout) rl.findViewById(R.id.full);
+        if(simple != null && full != null) {
+            if(isSimple) {
+                simple.setVisibility(View.VISIBLE);
+                full.setVisibility(View.GONE);
+            } else {
+                simple.setVisibility(View.GONE);
+                full.setVisibility(View.VISIBLE);
             }
         }
     }
