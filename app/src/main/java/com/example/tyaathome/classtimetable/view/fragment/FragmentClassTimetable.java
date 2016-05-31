@@ -81,15 +81,20 @@ public class FragmentClassTimetable extends Fragment {
                     return ;
                 }
 
-                if(nCurrentClickedPosition != -1) {
-                    final View oldView = recyclerView.getLayoutManager().findViewByPosition(nCurrentClickedPosition);
-                    if(oldView != null) {
-                        initResetAnimation(oldView).start();
-                    }
-                }
+//                if(nCurrentClickedPosition != -1) {
+//                    final View oldView = recyclerView.getLayoutManager().findViewByPosition(nCurrentClickedPosition);
+//                    if(oldView != null) {
+//                        initResetAnimation(oldView);
+//                    }
+//                }
+//
+//                final View newView = recyclerView.getLayoutManager().findViewByPosition(position);
+//                initStretchAnimation(newView);
 
+                //initItemAnimation()
+                final View oldView = recyclerView.getLayoutManager().findViewByPosition(nCurrentClickedPosition);
                 final View newView = recyclerView.getLayoutManager().findViewByPosition(position);
-                initStretchAnimation(newView).start();
+                initItemAnimation(oldView, newView);
 
                 nCurrentClickedPosition = position;
             }
@@ -167,9 +172,9 @@ public class FragmentClassTimetable extends Fragment {
         }
     }
 
-    private AnimationUtils initStretchAnimation(final View view) {
+    private void initStretchAnimation(final View view) {
         final int height = view.getMeasuredHeight();
-        AnimationUtils animationUtils = new AnimationUtils(0, 200, 500L, new MyAnimatorListenerAdapter() {
+        AnimationUtils animationUtils = new AnimationUtils(0, 100, 500L, new MyAnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
@@ -187,20 +192,21 @@ public class FragmentClassTimetable extends Fragment {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 super.onAnimationUpdate(animation);
-                view.getLayoutParams().height = (int)(height + (Float) animation.getAnimatedValue());
+                view.getLayoutParams().height = height + (int) animation.getAnimatedValue();
                 view.requestLayout();
             }
         });
-        return animationUtils;
+        animationUtils.start();
     }
 
-    private AnimationUtils initResetAnimation(final View view) {
+    private void initResetAnimation(final View view) {
         final int height = view.getMeasuredHeight();
-        AnimationUtils animationUtils = new AnimationUtils(0, 200, 500L, new MyAnimatorListenerAdapter() {
+        AnimationUtils animationUtils = new AnimationUtils(0, 100, 500L, new MyAnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 System.out.println("End");
+                isAnimationFinish = true;
             }
 
             @Override
@@ -213,10 +219,37 @@ public class FragmentClassTimetable extends Fragment {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 super.onAnimationUpdate(animation);
-                view.getLayoutParams().height = (int)(height - (Float) animation.getAnimatedValue());
+                view.getLayoutParams().height = height - (int) animation.getAnimatedValue();
                 view.requestLayout();
             }
         });
-        return animationUtils;
+        animationUtils.start();
+    }
+
+    private void initItemAnimation(View oldView, View newView) {
+
+        if(oldView != null && newView != null && oldView == newView) {
+            int height = oldView.getMeasuredHeight();
+            if(height >= 200) {
+                initResetAnimation(oldView);
+            } else if(height <= 100) {
+                initStretchAnimation(oldView);
+            }
+            return ;
+        }
+
+        if(oldView != null) {
+            int height = oldView.getMeasuredHeight();
+            if(height >= 200) {
+                initResetAnimation(oldView);
+            }
+        }
+
+        if(newView != null ) {
+            int height = newView.getMeasuredHeight();
+            if(height <= 100) {
+                initStretchAnimation(newView);
+            }
+        }
     }
 }

@@ -10,8 +10,8 @@ import com.example.tyaathome.classtimetable.model.inter.MyAnimatorListenerAdapte
 public class AnimationUtils {
     private ValueAnimator valueAnimator;
 
-    public AnimationUtils(float start, float end, long duration, MyAnimatorListenerAdapter adapter) {
-        valueAnimator = ValueAnimator.ofFloat(start, end);
+    public AnimationUtils(int start, int end, long duration, MyAnimatorListenerAdapter adapter) {
+        valueAnimator = ValueAnimator.ofInt(start, end);
         valueAnimator.addUpdateListener(adapter);
         valueAnimator.addListener(adapter);
         valueAnimator.setDuration(duration);
