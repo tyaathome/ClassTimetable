@@ -54,7 +54,7 @@ public class AdapterClassTimeTable extends RecyclerView.Adapter<AdapterClassTime
 
 
         if(holder.itemView != null) {
-            holder.itemView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 300));
+            holder.itemView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100));
             //holder.itemView.setBackgroundColor(Utils.getRandomColor());
         }
 
